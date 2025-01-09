@@ -58,7 +58,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: c87f49c70d5cee144a47dd6fc0df98b8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 54fa694358e1ccd4abaab8fd67c29d6b, type: 3}
   m_Color: {r: 0.35248306, g: 0.7906223, b: 0.8396226, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -166,5 +166,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 1, b: 1, a: 0}
-  ballColor: {r: 0, g: 1, b: 0.99010324, a: 0}
   colorChangeDuration: 0.2
