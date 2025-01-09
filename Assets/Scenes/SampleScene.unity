@@ -651,8 +651,8 @@ MonoBehaviour:
   useSlowMotion: 1
   slowMotionTimeScale: 0.05
   power: 10
-  minPower: {x: -8, y: -8}
-  maxPower: {x: 8, y: 8}
+  minPower: {x: -3, y: -3}
+  maxPower: {x: 3, y: 3}
   CueStick: {fileID: 86712622}
 --- !u!4 &259080007 stripped
 Transform:
