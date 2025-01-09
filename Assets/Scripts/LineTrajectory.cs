@@ -16,8 +16,12 @@ public class LineTrajectory : MonoBehaviour
         lineRenderer.positionCount = 2;
         Vector3[] points = new Vector3[lineRenderer.positionCount];
 
+        Vector3 dir = endPoint - startPoint;
+        Vector3 newPoint = startPoint + (-dir);
+        newPoint.z = 15;
+
         points[0] = startPoint;
-        points[1] = endPoint;  
+        points[1] = newPoint;  
 
         lineRenderer.SetPositions(points);
     }

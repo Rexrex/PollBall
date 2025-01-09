@@ -19,6 +19,10 @@ public class DragNShoot : MonoBehaviour
     public Vector2 minPower;
     public Vector2 maxPower;
 
+    [Header("Cue Stick")]
+    //Slow Motion variables
+    public GameObject CueStick;
+
     private Rigidbody2D rb;
     LineTrajectory tl;
 
@@ -48,21 +52,45 @@ public class DragNShoot : MonoBehaviour
         {
             // Left Mouse Down
             startPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+            startPoint = this.transform.position;
             startPoint.z = 15;
 
             if (useSlowMotion)
             {
                 StartSlowMotion();
             }
+
+            if (CueStick)
+            {
+                CueStick.SetActive(true);
+                this.rb.angularVelocity = 0;
+                CueStick.transform.position = startPoint;
+
+                Vector3 vectorToTarget = CueStick.transform.position - transform.position;
+
+                CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
+            }
         }
 
         if (Input.GetMouseButton(0))
         {
-
-            Vector3 currentPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+            startPoint = this.transform.position;
             startPoint.z = 15;
+            Vector3 currentPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+            currentPoint.z = 15;
 
             tl.RenderLine(startPoint, currentPoint);
+
+            if (CueStick)
+            {
+                CueStick.transform.position = currentPoint;
+
+                Vector3 vectorToTarget = CueStick.transform.position - transform.position;
+
+                CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
+
+
+            }
         }
 
 
@@ -72,6 +100,7 @@ public class DragNShoot : MonoBehaviour
 
             // Left Mouse Down
             endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+            endPoint.z = 15;
             startPoint.z = 15;
 
             force = new Vector2(Mathf.Clamp(startPoint.x - endPoint.x, minPower.x, maxPower.x),
@@ -84,6 +113,12 @@ public class DragNShoot : MonoBehaviour
             if (useSlowMotion)
             {
                 StopSlowMotion();
+            }
+
+            if (CueStick)
+            {
+                CueStick.SetActive(false);
+                CueStick.transform.position = endPoint;
             }
         }
 
