@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 18a2ed19800917c499d7cd24782f91cd
+guid: 0a5c5e25c4312fb4a91bff3079f5cbfb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6937817954938267909
-    second: 2_0
+      213: -3341830945421026629
+    second: actual_pooltable_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,11 +52,11 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 15, y: 99, z: 17, w: 14}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
-  spriteTessellationDetail: 0
+  spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
@@ -126,37 +126,33 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 2_0
+      name: actual_pooltable_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1300
-        height: 799
+        x: 8
+        y: 3
+        width: 1025
+        height: 540
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5092c600ca4184060800000000000000
-      internalID: 6937817954938267909
+      spriteID: bba95cef57e6f91d0800000000000000
+      internalID: -3341830945421026629
       vertices: []
       indices: 
       edges: []
       weights: []
-    outline:
-    - - {x: -626, y: -311.5}
-      - {x: 632, y: -311.5}
-      - {x: 628, y: 386.5}
-      - {x: -637, y: 395.5}
+    outline: []
     customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -165,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      2_0: 6937817954938267909
+      actual_pooltable_0: -3341830945421026629
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
