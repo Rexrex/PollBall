@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.VFX;
 
 public class DragNShoot : MonoBehaviour
@@ -18,10 +19,12 @@ public class DragNShoot : MonoBehaviour
     public float power = 10f;
     public Vector2 minPower;
     public Vector2 maxPower;
+    public float ballRadius = 0.25f;
 
     [Header("Cue Stick")]
     //Slow Motion variables
     public GameObject CueStick;
+    public GameObject TestBall1;
 
     private Rigidbody2D rb;
     LineTrajectory tl;
@@ -29,6 +32,7 @@ public class DragNShoot : MonoBehaviour
     Camera cam;
     Vector2 force;
     Vector3 startPoint;
+    Vector3 currentPoint;
     Vector3 endPoint;
 
 
@@ -45,86 +49,106 @@ public class DragNShoot : MonoBehaviour
 
     private void Update()
     {
-      
-
-
-        if (Input.GetMouseButtonDown(0))
+        if (GameStateManager.currentState == GameStateManager.GameState.Play)
         {
-            // Left Mouse Down
-            startPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-            startPoint = this.transform.position;
-            startPoint.z = 15;
-
-            if (useSlowMotion)
+            if (Input.GetMouseButtonDown(0))
             {
-                StartSlowMotion();
+                // Left Mouse Down
+                startPoint = GetSphereHitPoint();
+                startPoint.z = 1;
+
+                if (useSlowMotion)
+                {
+                    StartSlowMotion();
+                }
+
+                if (CueStick)
+                {
+                    CueStick.SetActive(true);
+                    this.rb.angularVelocity = 0;
+                    CueStick.transform.position = startPoint;
+
+                    Vector3 vectorToTarget = CueStick.transform.position - transform.position;
+
+                    CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
+                }
+
+                if (TestBall1)
+                {
+                    TestBall1.transform.position = startPoint;
+                }
             }
 
-            if (CueStick)
+            if (Input.GetMouseButton(0))
             {
-                CueStick.SetActive(true);
-                this.rb.angularVelocity = 0;
-                CueStick.transform.position = startPoint;
+                // Left Mouse Down
+                currentPoint = GetSphereHitPoint();
+                currentPoint.z = 1;
 
-                Vector3 vectorToTarget = CueStick.transform.position - transform.position;
+                endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+                endPoint.z = 1;
 
-                CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
+                force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
+                    Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
+
+                tl.RenderLine(currentPoint, cam.ScreenToWorldPoint(Input.mousePosition), force);
+
+                if (CueStick)
+                {
+                    CueStick.transform.position = currentPoint;
+
+                    Vector3 vectorToTarget = CueStick.transform.position - transform.position;
+
+                    CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
+
+
+                }
+
+                if (useSlowMotion)
+                {
+                    if (Time.timeScale < 1.0f)
+                    {
+                        Time.timeScale += 0.001f;
+                        Time.fixedDeltaTime = startFixedDeltaTime * Time.timeScale;
+                    }
+
+                }
             }
+
+
+            if (Input.GetMouseButtonUp(0))
+            {
+
+
+                // Left Mouse Down
+                endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+                endPoint.z = 1;
+
+
+                force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
+                    Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
+                rb.AddForce(force * power, ForceMode2D.Impulse);
+
+
+                tl.EndLine();
+
+
+                if (useSlowMotion)
+                {
+                    StopSlowMotion();
+                }
+
+                if (CueStick)
+                {
+                    CueStick.SetActive(false);
+                    CueStick.transform.position = endPoint;
+                }
+            }
+
+            // effect.SetVector3("ColliderPos", this.gameObject.transform.position);
         }
 
-        if (Input.GetMouseButton(0))
-        {
-            startPoint = this.transform.position;
-            startPoint.z = 15;
-            Vector3 currentPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-            currentPoint.z = 15;
-
-            tl.RenderLine(startPoint, currentPoint);
-
-            if (CueStick)
-            {
-                CueStick.transform.position = currentPoint;
-
-                Vector3 vectorToTarget = CueStick.transform.position - transform.position;
-
-                CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
-
-
-            }
-        }
-
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            
-
-            // Left Mouse Down
-            endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-            endPoint.z = 15;
-            startPoint.z = 15;
-
-            force = new Vector2(Mathf.Clamp(startPoint.x - endPoint.x, minPower.x, maxPower.x),
-                Mathf.Clamp(startPoint.y - endPoint.y, minPower.y, maxPower.y));
-            rb.AddForce(force * power, ForceMode2D.Impulse);
-
-            tl.EndLine();
-
-
-            if (useSlowMotion)
-            {
-                StopSlowMotion();
-            }
-
-            if (CueStick)
-            {
-                CueStick.SetActive(false);
-                CueStick.transform.position = endPoint;
-            }
-        }
-
-       // effect.SetVector3("ColliderPos", this.gameObject.transform.position);
     }
-
 
     /*
      * Method to start slow motion effect
@@ -143,5 +167,23 @@ public class DragNShoot : MonoBehaviour
 
         Time.timeScale = startTimeScale;
         Time.fixedDeltaTime = startFixedDeltaTime;
+    }
+
+    private Vector3 GetSphereHitPoint()
+    {
+        Vector3 mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = 1;
+        Vector3 centerPoint = this.transform.position;
+        centerPoint.z = 1;
+        // Calculate the vector from the sphere's center to the mouse position
+        Vector3 direction = mousePosition - centerPoint;
+        direction.z = 1;
+        // Normalize the direction to get a unit vector
+        direction.Normalize();
+
+        // Scale the unit vector by the sphere's radius
+        Vector3 closestPoint = centerPoint + direction * this.ballRadius;
+        //Debug.DrawLine(closestPoint, centerPoint, Color.red, 5f);
+        return closestPoint;
     }
 }

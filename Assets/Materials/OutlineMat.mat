@@ -45,12 +45,12 @@ Material:
     - PixelSnap: 0
     - _EnableExternalAlpha: 0
     - _Outline: 1
-    - _OutlineSize: 10
+    - _OutlineSize: 20
     - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DiffuseColor: {r: 0.084549636, g: 0.9433962, b: 0.8775966, a: 1}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
