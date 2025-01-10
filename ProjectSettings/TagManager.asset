@@ -8,6 +8,8 @@ TagManager:
   - Blue
   - Black
   - White
+  - Test1
+  - Wall
   layers:
   - Default
   - TransparentFX
