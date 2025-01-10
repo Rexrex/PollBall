@@ -20,8 +20,11 @@ public class ScoreManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CurrentTimer -= Time.deltaTime;
-       textMeshProUGUI.text = Mathf.Round(CurrentTimer).ToString();
+
+        if(GameStateManager.currentState == GameStateManager.GameState.Play) {
+            CurrentTimer -= Time.deltaTime;
+           textMeshProUGUI.text = Mathf.Round(CurrentTimer).ToString();
+        }
 
     }
 

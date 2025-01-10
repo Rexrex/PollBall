@@ -49,106 +49,106 @@ public class DragNShoot : MonoBehaviour
 
     private void Update()
     {
-      
-
-
-        if (Input.GetMouseButtonDown(0))
+        if (GameStateManager.currentState == GameStateManager.GameState.Play)
         {
-            // Left Mouse Down
-            startPoint = GetSphereHitPoint();
-            startPoint.z = 1;
-
-            if (useSlowMotion)
+            if (Input.GetMouseButtonDown(0))
             {
-                StartSlowMotion();
-            }
+                // Left Mouse Down
+                startPoint = GetSphereHitPoint();
+                startPoint.z = 1;
 
-            if (CueStick)
-            {
-                CueStick.SetActive(true);
-                this.rb.angularVelocity = 0;
-                CueStick.transform.position = startPoint;
-
-                Vector3 vectorToTarget = CueStick.transform.position - transform.position;
-
-                CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
-            }
-
-            if (TestBall1)
-            {
-                TestBall1.transform.position = startPoint;
-            }
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            // Left Mouse Down
-            currentPoint = GetSphereHitPoint();
-            currentPoint.z = 1;
-
-            endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-            endPoint.z = 1;
-
-            force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
-                Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
-
-            tl.RenderLine(currentPoint, cam.ScreenToWorldPoint(Input.mousePosition), force);
-
-            if (CueStick)
-            {
-                CueStick.transform.position = currentPoint;
-
-                Vector3 vectorToTarget = CueStick.transform.position - transform.position;
-
-                CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
-
-
-            }
-
-            if (useSlowMotion)
-            {
-                if(Time.timeScale < 1.0f)
+                if (useSlowMotion)
                 {
-                    Time.timeScale += 0.001f;
-                    Time.fixedDeltaTime = startFixedDeltaTime * Time.timeScale;
+                    StartSlowMotion();
                 }
-                
+
+                if (CueStick)
+                {
+                    CueStick.SetActive(true);
+                    this.rb.angularVelocity = 0;
+                    CueStick.transform.position = startPoint;
+
+                    Vector3 vectorToTarget = CueStick.transform.position - transform.position;
+
+                    CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
+                }
+
+                if (TestBall1)
+                {
+                    TestBall1.transform.position = startPoint;
+                }
             }
+
+            if (Input.GetMouseButton(0))
+            {
+                // Left Mouse Down
+                currentPoint = GetSphereHitPoint();
+                currentPoint.z = 1;
+
+                endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+                endPoint.z = 1;
+
+                force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
+                    Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
+
+                tl.RenderLine(currentPoint, cam.ScreenToWorldPoint(Input.mousePosition), force);
+
+                if (CueStick)
+                {
+                    CueStick.transform.position = currentPoint;
+
+                    Vector3 vectorToTarget = CueStick.transform.position - transform.position;
+
+                    CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
+
+
+                }
+
+                if (useSlowMotion)
+                {
+                    if (Time.timeScale < 1.0f)
+                    {
+                        Time.timeScale += 0.001f;
+                        Time.fixedDeltaTime = startFixedDeltaTime * Time.timeScale;
+                    }
+
+                }
+            }
+
+
+            if (Input.GetMouseButtonUp(0))
+            {
+
+
+                // Left Mouse Down
+                endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+                endPoint.z = 1;
+
+
+                force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
+                    Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
+                rb.AddForce(force * power, ForceMode2D.Impulse);
+
+
+                tl.EndLine();
+
+
+                if (useSlowMotion)
+                {
+                    StopSlowMotion();
+                }
+
+                if (CueStick)
+                {
+                    CueStick.SetActive(false);
+                    CueStick.transform.position = endPoint;
+                }
+            }
+
+            // effect.SetVector3("ColliderPos", this.gameObject.transform.position);
         }
 
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            
-
-            // Left Mouse Down
-            endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-            endPoint.z = 1;
-
-
-            force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
-                Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
-            rb.AddForce(force * power, ForceMode2D.Impulse);
-
-           
-            tl.EndLine();
-
-
-            if (useSlowMotion)
-            {
-                StopSlowMotion();
-            }
-
-            if (CueStick)
-            {
-                CueStick.SetActive(false);
-                CueStick.transform.position = endPoint;
-            }
-        }
-
-       // effect.SetVector3("ColliderPos", this.gameObject.transform.position);
     }
-
 
     /*
      * Method to start slow motion effect
