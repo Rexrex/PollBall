@@ -1,8 +1,10 @@
+using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.VFX;
+using static GameStateManager;
 
 public class DragNShoot : MonoBehaviour
 {
@@ -34,6 +36,7 @@ public class DragNShoot : MonoBehaviour
     Vector3 startPoint;
     Vector3 currentPoint;
     Vector3 endPoint;
+    bool gameStarted = false;
 
 
     private void Start()
@@ -44,12 +47,11 @@ public class DragNShoot : MonoBehaviour
 
         startTimeScale = Time.timeScale;
         startFixedDeltaTime = Time.fixedDeltaTime;
-        
     }
 
-    private void Update()
+    void Update()
     {
-        if (GameStateManager.currentState == GameStateManager.GameState.Play)
+        if (GameStateManager.currentState == GameStateManager.GameState.Play && gameStarted)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -185,5 +187,10 @@ public class DragNShoot : MonoBehaviour
         Vector3 closestPoint = centerPoint + direction * this.ballRadius;
         //Debug.DrawLine(closestPoint, centerPoint, Color.red, 5f);
         return closestPoint;
+    }
+
+    public void StartedGame()
+    {
+        gameStarted = true;
     }
 }

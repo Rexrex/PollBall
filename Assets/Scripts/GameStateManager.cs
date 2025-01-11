@@ -12,6 +12,7 @@ public class GameStateManager : MonoBehaviour
 
     public GameObject StartMenu;
     public GameObject PauseMenu;
+    public GameObject GameUI;
     public static GameState currentState;
     public GameState startingState;
 
@@ -20,6 +21,7 @@ public class GameStateManager : MonoBehaviour
         currentState = startingState;
         StartMenu.SetActive(true);
         PauseMenu.SetActive(false);
+        GameUI.SetActive(false);
     }
 
     public void UpdateState(GameState state)
@@ -43,6 +45,7 @@ public class GameStateManager : MonoBehaviour
                 Time.fixedDeltaTime = 1;
                 StartMenu.SetActive(false);
                 PauseMenu.SetActive(false);
+                GameUI.SetActive(true);
                 break;
 
             case GameState.End:
@@ -63,6 +66,13 @@ public class GameStateManager : MonoBehaviour
     public void StartGame()
     {
         UpdateState(GameState.Play);
+        Invoke(nameof(ActuallyStartTheGame), 0.1f);
+       
+    }
+
+    void ActuallyStartTheGame()
+    {
+        GameObject.FindGameObjectWithTag("Player").GetComponent<DragNShoot>().StartedGame();
     }
 
     public void PauseGame()
@@ -81,5 +91,8 @@ public class GameStateManager : MonoBehaviour
     {
         UpdateState(GameState.End);
     }
+
+
+
 
 }
