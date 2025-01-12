@@ -19,9 +19,12 @@ public class GameStateManager : MonoBehaviour
     public void Start()
     {
         currentState = startingState;
-        StartMenu.SetActive(true);
-        PauseMenu.SetActive(false);
-        GameUI.SetActive(false);
+        UpdateState(currentState);
+
+        if (currentState == GameState.Play)
+        {
+            Invoke(nameof(ActuallyStartTheGame), 0.1f);
+        }
     }
 
     public void UpdateState(GameState state)

@@ -4,6 +4,7 @@ public class PoolBall : MonoBehaviour
 {
    
     public Color baseColor;
+    public bool ChangeColorOnCollision;
     //Defined in the renderer
     Color actualBallColor;
 
@@ -32,18 +33,34 @@ public class PoolBall : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        StopAllCoroutines(); // Stop any existing color change coroutine
-        StartCoroutine(ChangeColorTemporarily());
+
+        if (ChangeColorOnCollision)
+        {
+            StopAllCoroutines(); // Stop any existing color change coroutine
+            StartCoroutine(ChangeColorTemporarily());
+        }
     }
 
     private System.Collections.IEnumerator ChangeColorTemporarily()
     {
-        // Change to the hit color
-        spriteRenderer.color = actualBallColor;
+        ChangeColor();
 
         // Wait for the specified duration
         yield return new WaitForSeconds(colorChangeDuration);
 
+        // Revert to the original color
+        ResetColor();
+    }
+
+
+    public void ChangeColor()
+    {
+        // Change to the hit color
+        spriteRenderer.color = actualBallColor;
+    }
+
+    public void ResetColor()
+    {
         // Revert to the original color
         spriteRenderer.color = baseColor;
     }

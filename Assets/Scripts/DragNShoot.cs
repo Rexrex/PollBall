@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -37,6 +38,8 @@ public class DragNShoot : MonoBehaviour
     Vector3 currentPoint;
     Vector3 endPoint;
     bool gameStarted = false;
+
+    public static event Action ShootEvent;
 
 
     private void Start()
@@ -145,6 +148,8 @@ public class DragNShoot : MonoBehaviour
                     CueStick.SetActive(false);
                     CueStick.transform.position = endPoint;
                 }
+
+                ShootEvent?.Invoke();
             }
 
             // effect.SetVector3("ColliderPos", this.gameObject.transform.position);
