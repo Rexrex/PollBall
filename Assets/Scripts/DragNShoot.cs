@@ -1,8 +1,11 @@
+using System;
+using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.VFX;
+using static GameStateManager;
 
 public class DragNShoot : MonoBehaviour
 {
@@ -34,6 +37,9 @@ public class DragNShoot : MonoBehaviour
     Vector3 startPoint;
     Vector3 currentPoint;
     Vector3 endPoint;
+    bool gameStarted = false;
+
+    public static event Action ShootEvent;
 
 
     private void Start()
@@ -44,12 +50,11 @@ public class DragNShoot : MonoBehaviour
 
         startTimeScale = Time.timeScale;
         startFixedDeltaTime = Time.fixedDeltaTime;
-        
     }
 
-    private void Update()
+    void Update()
     {
-        if (GameStateManager.currentState == GameStateManager.GameState.Play)
+        if (GameStateManager.currentState == GameStateManager.GameState.Play && gameStarted)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -143,6 +148,8 @@ public class DragNShoot : MonoBehaviour
                     CueStick.SetActive(false);
                     CueStick.transform.position = endPoint;
                 }
+
+                ShootEvent?.Invoke();
             }
 
             // effect.SetVector3("ColliderPos", this.gameObject.transform.position);
@@ -185,5 +192,10 @@ public class DragNShoot : MonoBehaviour
         Vector3 closestPoint = centerPoint + direction * this.ballRadius;
         //Debug.DrawLine(closestPoint, centerPoint, Color.red, 5f);
         return closestPoint;
+    }
+
+    public void StartedGame()
+    {
+        gameStarted = true;
     }
 }

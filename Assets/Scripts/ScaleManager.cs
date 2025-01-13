@@ -12,6 +12,8 @@ public class ScaleManager : MonoBehaviour
         ScaleWithScreenSize();
     }
 
+    UnityEngine.DeviceOrientation CurrentRotation = DeviceOrientation.Portrait;
+
     private void ScaleWithScreenSize()
     {
         // Step 1 Get Device Screen Aspect
@@ -40,6 +42,15 @@ public class ScaleManager : MonoBehaviour
 
         BackgroundToScale.transform.localScale = new Vector3(bgIma_scale_ratio_Width, bgIma_scale_ratio_Height/2, 1.0f);
 
+    }
+
+    private void FixedUpdate()
+    {
+        if(CurrentRotation != Input.deviceOrientation)
+        {
+            ScaleWithScreenSize();
+            CurrentRotation = Input.deviceOrientation;
+        }
     }
 
 }

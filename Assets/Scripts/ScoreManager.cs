@@ -4,8 +4,7 @@ using UnityEngine;
 public class ScoreManager : MonoBehaviour
 {
 
-    public float MaxTime;
-    float CurrentTimer;
+    int CurrentStroke = 0;
     Vector3 InitialPlayerPos;
 
     public TextMeshProUGUI textMeshProUGUI;
@@ -13,57 +12,37 @@ public class ScoreManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        CurrentTimer = MaxTime;
-        InitialPlayerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+        DragNShoot.ShootEvent += ShotsFired;
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        if(GameStateManager.currentState == GameStateManager.GameState.Play) {
-            CurrentTimer -= Time.deltaTime;
-           textMeshProUGUI.text = Mathf.Round(CurrentTimer).ToString();
-        }
-
     }
 
-    public void ScoredBall(string Tag)
-    {
-        Debug.Log("Scored " + Tag);
-        switch (Tag) {
 
-            case "Black":
-                CurrentTimer = 0;
-                break;
-
-            case "Player" or "White":
-                IncrementTime(-10);
-                ResetPlayerPosition();
-                break;
-
-            default:
-                IncrementTime(10);
-                break;
-
-        }
-
-    }
 
     public void EndGame()
     {
 
     }
 
-    public void ResetPlayerPosition() {
-
-        Debug.Log("Resetting Player");
-
-        GameObject.FindGameObjectWithTag("Player").transform.position = InitialPlayerPos;
-    }
-
     public void IncrementTime(float Increment)
     {
-        CurrentTimer += Increment;
+        //CurrentTimer += Increment;
+    }
+
+    void ShotsFired()
+    {
+        CurrentStroke += 1;
+        UpdateGUI();
+
+
+    }
+
+    void UpdateGUI()
+    {
+        textMeshProUGUI.text = CurrentStroke.ToString();
     }
 }

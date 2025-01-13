@@ -7,19 +7,31 @@ public class GameStateManager : MonoBehaviour
         StartMenu,
         Play,
         PauseMenu,
+        GameOverMenu,
+        WinMenu,
         End
     }
 
+    [Header("Menus")]
     public GameObject StartMenu;
     public GameObject PauseMenu;
+    public GameObject GameOverMenu;
+    public GameObject WinMenu;
+
+    public GameObject GameUI;
+
     public static GameState currentState;
     public GameState startingState;
 
     public void Start()
     {
         currentState = startingState;
-        StartMenu.SetActive(true);
-        PauseMenu.SetActive(false);
+        UpdateState(currentState);
+
+        if (currentState == GameState.Play)
+        {
+            Invoke(nameof(ActuallyStartTheGame), 0.1f);
+        }
     }
 
     public void UpdateState(GameState state)
@@ -43,6 +55,21 @@ public class GameStateManager : MonoBehaviour
                 Time.fixedDeltaTime = 1;
                 StartMenu.SetActive(false);
                 PauseMenu.SetActive(false);
+                GameOverMenu.SetActive(false);
+                WinMenu.SetActive(false);
+                GameUI.SetActive(true);
+                break;
+
+            case GameState.GameOverMenu:
+                Time.timeScale = 0;
+                Time.fixedDeltaTime = 0;
+                GameOverMenu.SetActive(true);
+                break;
+
+            case GameState.WinMenu:
+                Time.timeScale = 0;
+                Time.fixedDeltaTime = 0;
+                WinMenu.SetActive(true);
                 break;
 
             case GameState.End:
@@ -63,6 +90,13 @@ public class GameStateManager : MonoBehaviour
     public void StartGame()
     {
         UpdateState(GameState.Play);
+        Invoke(nameof(ActuallyStartTheGame), 0.1f);
+       
+    }
+
+    void ActuallyStartTheGame()
+    {
+        GameObject.FindGameObjectWithTag("Player").GetComponent<DragNShoot>().StartedGame();
     }
 
     public void PauseGame()
@@ -81,5 +115,22 @@ public class GameStateManager : MonoBehaviour
     {
         UpdateState(GameState.End);
     }
+
+    public void GameOver()
+    {
+        UpdateState(GameState.GameOverMenu);
+    }
+
+    public void GameWin()
+    {
+        UpdateState(GameState.WinMenu);
+    }
+
+    public void Reset()
+    {
+        GetComponent<GameManager>().Reset();
+        UpdateState(GameState.Play);
+    }
+
 
 }
