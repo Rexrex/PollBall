@@ -1,16 +1,133 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    [Header("Game Settings")]
+    public int NumberOfBalls = 5;
+    public bool FollowOrder = false;
+
+    public Color[] ColorLibrary;
+    public Vector3[] BallStartingPositions;
+    public Color[] ForbiddenBalls;
+
+    [Header("GUI")]
+    public GameObject BallPrefab;
+    public GameObject BallParent;
+
+    [Header("GUI")]
+    public GameObject BallUIDisplay;
+    public GameObject BallUIPrefab;
+    public GameObject BlackBallUIPrefab;
+
+    public Vector3 InitialPlayerPos { get; private set; }
+
+    private List<GameObject> BallUI;
+    private GameObject BlackBallUIInstance;
+    private int BallInPocketCount = 0;
+
     void Start()
     {
 
+        InitialPlayerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+
+        BallUI = new List<GameObject>();
+
+        // Setting up colors
+        if (NumberOfBalls > 0)
+        {
+            if (BallUIDisplay != null)
+            {
+
+                if (BallUIDisplay != null)
+                {
+
+                    for (int i = 0; i < NumberOfBalls; i++)
+                    {
+                        
+                        GameObject NewBallUI = GameObject.Instantiate(BallUIPrefab, Vector3.zero, Quaternion.identity, BallUIDisplay.transform);
+                        NewBallUI.GetComponent<UnityEngine.UI.Image>().color = new Color(ColorLibrary[i].r, ColorLibrary[i].g, ColorLibrary[i].b, 0.2f);
+                        BallUI.Add(NewBallUI);
+
+                        GameObject NewBall = GameObject.Instantiate(BallPrefab, BallStartingPositions[i], Quaternion.identity, BallParent.transform);
+                        NewBall.transform.localPosition = BallStartingPositions[i]; 
+                        NewBall.GetComponent<SpriteRenderer>().color = ColorLibrary[i];
+                        NewBall.GetComponent<PoolBall>().actualBallColor = ColorLibrary[i];
+                    }
+
+                    BlackBallUIInstance = GameObject.Instantiate(BlackBallUIPrefab, Vector3.zero, Quaternion.identity, BallUIDisplay.transform);
+                }
+            }
+
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+
+    }
+
+    public void ResetPlayerBallPosition()
+    {
+
+        Debug.Log("Resetting Player");
+
+        GameObject.FindGameObjectWithTag("Player").transform.position = InitialPlayerPos;
+    }
+
+    public void ScoredBall(GameObject Ball)
+    {
+
+        if(Ball.GetComponent<PoolBall>() != null)
+        {
+            Color PocketBallColor = Ball.GetComponent<PoolBall>().actualBallColor;
+
+            if (PocketBallColor == Color.black && BallInPocketCount < NumberOfBalls)
+            {
+                //Game Over
+                Debug.Log("Game Over Man");
+
+            }
+            else if (PocketBallColor == Color.black && BallInPocketCount == NumberOfBalls)
+            {
+                //Game Win
+                Debug.Log("GG");
+            }
+
+            else if (PocketBallColor == Color.white)
+            {
+                // Reset
+                ResetPlayerBallPosition();
+
+                if (BallInPocketCount > 0)
+                {
+                    //Instantiate a Ball
+                }
+            }
+            else
+            {
+                BallInPocketCount += 1;
+
+                foreach (var g in BallUI)
+                {
+                    if (g.GetComponent<UnityEngine.UI.Image>().color == PocketBallColor)
+                    {
+                        g.GetComponent<UnityEngine.UI.Image>().color = new Color(PocketBallColor.r, PocketBallColor.g, PocketBallColor.b, 1.0f);
+                    }
+                }
+
+                if(BallInPocketCount == NumberOfBalls)
+                {
+                    BlackBallUIInstance.transform.GetChild(0).gameObject.SetActive(false);
+                }
+            }
+        }   
+        
 
     }
 }

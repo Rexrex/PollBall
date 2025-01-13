@@ -6,7 +6,7 @@ public class PoolBall : MonoBehaviour
     public Color baseColor;
     public bool ChangeColorOnCollision;
     //Defined in the renderer
-    Color actualBallColor;
+    public Color actualBallColor;
 
     private SpriteRenderer spriteRenderer;
 

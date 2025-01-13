@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 935806971263546007}
   m_Layer: 0
   m_Name: Ball
-  m_TagString: Untagged
+  m_TagString: Ball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.28713155, w: 0.95789117}
   m_LocalPosition: {x: -2.250302, y: 4.21492, z: 9.923787}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -165,5 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faff5a8f6bf8d55468fa22c29e246223, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseColor: {r: 0, g: 0, b: 0, a: 0}
+  baseColor: {r: 0, g: 0, b: 0, a: 1}
+  ChangeColorOnCollision: 0
+  actualBallColor: {r: 0, g: 0, b: 0, a: 0}
   colorChangeDuration: 0.2

@@ -4,21 +4,20 @@ public class PocketScript : MonoBehaviour
 {
 
     public int pointsPerBall = 10;
-    private ScoreManager scoreManager;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private GameManager gameManager;
 
     void Start()
     {
-        scoreManager = FindFirstObjectByType<ScoreManager>();
+        gameManager = FindFirstObjectByType<GameManager>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag != null)
         {
-            string tag = collision.gameObject.tag.ToString();
+            string tag = collision.gameObject.name.ToString();
 
-            scoreManager.ScoredBall(tag);
+            gameManager.ScoredBall(collision.gameObject);
 
             if(tag != "Player")
                 Destroy(collision.gameObject);
