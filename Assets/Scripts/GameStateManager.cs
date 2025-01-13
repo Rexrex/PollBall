@@ -126,7 +126,11 @@ public class GameStateManager : MonoBehaviour
         UpdateState(GameState.WinMenu);
     }
 
-
+    public void Reset()
+    {
+        GetComponent<GameManager>().Reset();
+        UpdateState(GameState.Play);
+    }
 
 
 }

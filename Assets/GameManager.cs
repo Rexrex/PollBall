@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -110,6 +111,20 @@ public class GameManager : MonoBehaviour
                 if (BallInPocketCount > 0)
                 {
                     //Instantiate a Ball
+
+                    foreach (var g in BallUI)
+                    {
+                        
+                        if (CompareRGBs(g.GetComponent<UnityEngine.UI.Image>().color , PocketBallColor))
+                        {
+                            g.GetComponent<UnityEngine.UI.Image>().color = new Color(PocketBallColor.r, PocketBallColor.g, PocketBallColor.b, 0.2f);
+                            GameObject NewBall = GameObject.Instantiate(BallPrefab, BallStartingPositions[0], Quaternion.identity, BallParent.transform);
+                            NewBall.transform.localPosition = BallStartingPositions[0];
+                            NewBall.GetComponent<SpriteRenderer>().color = PocketBallColor;
+                            NewBall.GetComponent<PoolBall>().actualBallColor = PocketBallColor;
+                            break;
+                        }
+                    }
                 }
             }
             else
@@ -118,9 +133,10 @@ public class GameManager : MonoBehaviour
 
                 foreach (var g in BallUI)
                 {
-                    if (g.GetComponent<UnityEngine.UI.Image>().color == PocketBallColor)
+                    if (CompareRGBs(g.GetComponent<UnityEngine.UI.Image>().color, PocketBallColor))
                     {
                         g.GetComponent<UnityEngine.UI.Image>().color = new Color(PocketBallColor.r, PocketBallColor.g, PocketBallColor.b, 1.0f);
+                        break;
                     }
                 }
 
@@ -132,5 +148,19 @@ public class GameManager : MonoBehaviour
         }   
         
 
+    }
+
+
+    public bool CompareRGBs(Color a, Color b)
+    {
+        if (a.r == b.r && a.b == b.b && a.g == b.g)
+            return true;
+        return false;
+    }
+
+
+    public void Reset()
+    {
+        Start();
     }
 }
