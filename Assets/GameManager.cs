@@ -29,12 +29,13 @@ public class GameManager : MonoBehaviour
     private List<GameObject> BallUI;
     private GameObject BlackBallUIInstance;
     private int BallInPocketCount = 0;
+    private GameStateManager gameStateManager;
 
     void Start()
     {
 
         InitialPlayerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
-
+        gameStateManager = this.GetComponent<GameStateManager>();
         BallUI = new List<GameObject>();
 
         // Setting up colors
@@ -90,12 +91,14 @@ public class GameManager : MonoBehaviour
             if (PocketBallColor == Color.black && BallInPocketCount < NumberOfBalls)
             {
                 //Game Over
+                gameStateManager.GameOver();
                 Debug.Log("Game Over Man");
 
             }
             else if (PocketBallColor == Color.black && BallInPocketCount == NumberOfBalls)
             {
                 //Game Win
+                gameStateManager.GameWin();
                 Debug.Log("GG");
             }
 

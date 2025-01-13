@@ -7,12 +7,19 @@ public class GameStateManager : MonoBehaviour
         StartMenu,
         Play,
         PauseMenu,
+        GameOverMenu,
+        WinMenu,
         End
     }
 
+    [Header("Menus")]
     public GameObject StartMenu;
     public GameObject PauseMenu;
+    public GameObject GameOverMenu;
+    public GameObject WinMenu;
+
     public GameObject GameUI;
+
     public static GameState currentState;
     public GameState startingState;
 
@@ -48,7 +55,21 @@ public class GameStateManager : MonoBehaviour
                 Time.fixedDeltaTime = 1;
                 StartMenu.SetActive(false);
                 PauseMenu.SetActive(false);
+                GameOverMenu.SetActive(false);
+                WinMenu.SetActive(false);
                 GameUI.SetActive(true);
+                break;
+
+            case GameState.GameOverMenu:
+                Time.timeScale = 0;
+                Time.fixedDeltaTime = 0;
+                GameOverMenu.SetActive(true);
+                break;
+
+            case GameState.WinMenu:
+                Time.timeScale = 0;
+                Time.fixedDeltaTime = 0;
+                WinMenu.SetActive(true);
                 break;
 
             case GameState.End:
@@ -93,6 +114,16 @@ public class GameStateManager : MonoBehaviour
     public void QuitGame()
     {
         UpdateState(GameState.End);
+    }
+
+    public void GameOver()
+    {
+        UpdateState(GameState.GameOverMenu);
+    }
+
+    public void GameWin()
+    {
+        UpdateState(GameState.WinMenu);
     }
 
 
