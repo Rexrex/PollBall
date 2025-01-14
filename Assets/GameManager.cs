@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -24,6 +23,7 @@ public class GameManager : MonoBehaviour
     public GameObject BallUIDisplay;
     public GameObject BallUIPrefab;
     public GameObject BlackBallUIPrefab;
+    public float StartingAlpha;
 
     public Vector3 InitialPlayerPos { get; private set; }
 
@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
                     {
                         
                         GameObject NewBallUI = GameObject.Instantiate(BallUIPrefab, Vector3.zero, Quaternion.identity, BallUIDisplay.transform);
-                        NewBallUI.GetComponent<UnityEngine.UI.Image>().color = new Color(ColorLibrary[i].r, ColorLibrary[i].g, ColorLibrary[i].b, 0.2f);
+                        NewBallUI.GetComponent<UnityEngine.UI.Image>().color = new Color(ColorLibrary[i].r, ColorLibrary[i].g, ColorLibrary[i].b, StartingAlpha);
                         BallUI.Add(NewBallUI);
 
                         GameObject NewBall = GameObject.Instantiate(BallPrefab, BallStartingPositions[i], Quaternion.identity, BallParent.transform);
@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
                         
                         if (CompareRGBs(g.GetComponent<UnityEngine.UI.Image>().color , PocketBallColor))
                         {
-                            g.GetComponent<UnityEngine.UI.Image>().color = new Color(PocketBallColor.r, PocketBallColor.g, PocketBallColor.b, 0.2f);
+                            g.GetComponent<UnityEngine.UI.Image>().color = new Color(PocketBallColor.r, PocketBallColor.g, PocketBallColor.b, StartingAlpha);
                             GameObject NewBall = GameObject.Instantiate(BallPrefab, BallStartingPositions[0], Quaternion.identity, BallParent.transform);
                             NewBall.transform.localPosition = BallStartingPositions[0];
                             NewBall.GetComponent<SpriteRenderer>().color = PocketBallColor;

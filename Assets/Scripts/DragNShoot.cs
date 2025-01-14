@@ -14,6 +14,7 @@ public class DragNShoot : MonoBehaviour
     //Slow Motion variables
     public bool useSlowMotion = false;
     public float slowMotionTimeScale;
+    public float incrementalSlowMod = 0.001f;
 
     private float startTimeScale;
     private float startFixedDeltaTime;
@@ -23,6 +24,7 @@ public class DragNShoot : MonoBehaviour
     public Vector2 minPower;
     public Vector2 maxPower;
     public float ballRadius = 0.25f;
+    public float ShootMaxDistance = 2.0f;
 
     [Header("Cue Stick")]
     //Slow Motion variables
@@ -106,18 +108,29 @@ public class DragNShoot : MonoBehaviour
                 endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
                 endPoint.z = 0;
 
+                Vector3 direction = endPoint - currentPoint;
+                direction.z = 0;
+
+                if(direction.magnitude >= ShootMaxDistance)
+                {
+                    direction.Normalize();
+                    endPoint = currentPoint + direction * ShootMaxDistance;
+                }
+
                 force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
                     Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
 
-                tl.RenderLine(currentPoint, endPoint, force);
+                tl.RenderLine(currentPoint, endPoint, force, ballRadius);
 
                 if (CueStick)
                 {
-                    CueStick.transform.position = currentPoint;
+                    CueStick.transform.position = endPoint;
 
-                    Vector3 vectorToTarget = CueStick.transform.position - transform.position;
+                    float targetPosX = currentPoint.x - this.transform.position.x;
+                    float targetPosY = this.transform.position.y - currentPoint.y;
 
-                    CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
+                    float angle = Mathf.Atan2(targetPosX, targetPosY) * Mathf.Rad2Deg;
+                    CueStick.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
 
                 }
@@ -126,7 +139,7 @@ public class DragNShoot : MonoBehaviour
                 {
                     if (Time.timeScale < 1.0f)
                     {
-                        Time.timeScale += 0.001f;
+                        Time.timeScale += incrementalSlowMod;
                         Time.fixedDeltaTime = startFixedDeltaTime * Time.timeScale;
                     }
 
