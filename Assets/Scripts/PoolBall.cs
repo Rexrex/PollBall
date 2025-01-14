@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class PoolBall : MonoBehaviour
 {
@@ -10,11 +11,17 @@ public class PoolBall : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
+    public AudioClip CollisioSound;
+    private AudioSource audioSource;
+
     // Duration to keep the changed color
     public float colorChangeDuration = 0.3f;
 
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = CollisioSound;
+
         // Get the Renderer component and store the original color
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
@@ -39,6 +46,8 @@ public class PoolBall : MonoBehaviour
             StopAllCoroutines(); // Stop any existing color change coroutine
             StartCoroutine(ChangeColorTemporarily());
         }
+
+        audioSource.Play();
     }
 
     private System.Collections.IEnumerator ChangeColorTemporarily()
