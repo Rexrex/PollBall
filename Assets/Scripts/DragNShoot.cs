@@ -14,6 +14,7 @@ public class DragNShoot : MonoBehaviour
     //Slow Motion variables
     public bool useSlowMotion = false;
     public float slowMotionTimeScale;
+    public float incrementalSlowMod = 0.001f;
 
     private float startTimeScale;
     private float startFixedDeltaTime;
@@ -23,11 +24,15 @@ public class DragNShoot : MonoBehaviour
     public Vector2 minPower;
     public Vector2 maxPower;
     public float ballRadius = 0.25f;
+    public float ShootMaxDistance = 2.0f;
 
     [Header("Cue Stick")]
     //Slow Motion variables
     public GameObject CueStick;
+
+    [Header("Debug Variables")]
     public GameObject TestBall1;
+    public bool UseDebugRays;
 
     private Rigidbody2D rb;
     LineTrajectory tl;
@@ -60,7 +65,7 @@ public class DragNShoot : MonoBehaviour
             {
                 // Left Mouse Down
                 startPoint = GetSphereHitPoint();
-                startPoint.z = 1;
+                startPoint.z = 0;
 
                 if (useSlowMotion)
                 {
@@ -81,6 +86,7 @@ public class DragNShoot : MonoBehaviour
                 if (TestBall1)
                 {
                     TestBall1.transform.position = startPoint;
+                    TestBall1.SetActive(true);
                 }
             }
 
@@ -88,23 +94,43 @@ public class DragNShoot : MonoBehaviour
             {
                 // Left Mouse Down
                 currentPoint = GetSphereHitPoint();
-                currentPoint.z = 1;
+                currentPoint.z = 0;
+
+                if (UseDebugRays)
+                {
+
+                    if (TestBall1)
+                    {
+                        TestBall1.transform.position = currentPoint;
+                    }
+                }
 
                 endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-                endPoint.z = 1;
+                endPoint.z = 0;
+
+                Vector3 direction = endPoint - currentPoint;
+                direction.z = 0;
+
+                if(direction.magnitude >= ShootMaxDistance)
+                {
+                    direction.Normalize();
+                    endPoint = currentPoint + direction * ShootMaxDistance;
+                }
 
                 force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
                     Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
 
-                tl.RenderLine(currentPoint, cam.ScreenToWorldPoint(Input.mousePosition), force);
+                tl.RenderLine(currentPoint, endPoint, force, ballRadius);
 
                 if (CueStick)
                 {
-                    CueStick.transform.position = currentPoint;
+                    CueStick.transform.position = endPoint;
 
-                    Vector3 vectorToTarget = CueStick.transform.position - transform.position;
+                    float targetPosX = currentPoint.x - this.transform.position.x;
+                    float targetPosY = this.transform.position.y - currentPoint.y;
 
-                    CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
+                    float angle = Mathf.Atan2(targetPosX, targetPosY) * Mathf.Rad2Deg;
+                    CueStick.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
 
                 }
@@ -113,11 +139,13 @@ public class DragNShoot : MonoBehaviour
                 {
                     if (Time.timeScale < 1.0f)
                     {
-                        Time.timeScale += 0.001f;
+                        Time.timeScale += incrementalSlowMod;
                         Time.fixedDeltaTime = startFixedDeltaTime * Time.timeScale;
                     }
 
                 }
+
+             
             }
 
 
@@ -127,9 +155,9 @@ public class DragNShoot : MonoBehaviour
 
                 // Left Mouse Down
                 endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-                endPoint.z = 1;
+                endPoint.z = 0;
 
-
+                this.rb.linearVelocity = new Vector2(0,0);
                 force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
                     Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
                 rb.AddForce(force * power, ForceMode2D.Impulse);
@@ -149,7 +177,14 @@ public class DragNShoot : MonoBehaviour
                     CueStick.transform.position = endPoint;
                 }
 
+                if (TestBall1)
+                {
+                    TestBall1.SetActive(false);
+                }
+
                 ShootEvent?.Invoke();
+
+            
             }
 
             // effect.SetVector3("ColliderPos", this.gameObject.transform.position);
@@ -179,19 +214,15 @@ public class DragNShoot : MonoBehaviour
     private Vector3 GetSphereHitPoint()
     {
         Vector3 mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 1;
+        mousePosition.z = 0;
         Vector3 centerPoint = this.transform.position;
-        centerPoint.z = 1;
+        centerPoint.z = 0;
         // Calculate the vector from the sphere's center to the mouse position
         Vector3 direction = mousePosition - centerPoint;
-        direction.z = 1;
-        // Normalize the direction to get a unit vector
-        direction.Normalize();
-
-        // Scale the unit vector by the sphere's radius
-        Vector3 closestPoint = centerPoint + direction * this.ballRadius;
-        //Debug.DrawLine(closestPoint, centerPoint, Color.red, 5f);
-        return closestPoint;
+        direction.z = 0;
+        // If the point is inside the sphere, move it to the perimeter
+        direction.Normalize(); // Normalize to get the direction
+        return centerPoint + (direction * this.ballRadius);
     }
 
     public void StartedGame()
