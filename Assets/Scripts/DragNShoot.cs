@@ -27,7 +27,10 @@ public class DragNShoot : MonoBehaviour
     [Header("Cue Stick")]
     //Slow Motion variables
     public GameObject CueStick;
+
+    [Header("Debug Variables")]
     public GameObject TestBall1;
+    public bool UseDebugRays;
 
     private Rigidbody2D rb;
     LineTrajectory tl;
@@ -60,7 +63,7 @@ public class DragNShoot : MonoBehaviour
             {
                 // Left Mouse Down
                 startPoint = GetSphereHitPoint();
-                startPoint.z = 1;
+                startPoint.z = 0;
 
                 if (useSlowMotion)
                 {
@@ -81,6 +84,7 @@ public class DragNShoot : MonoBehaviour
                 if (TestBall1)
                 {
                     TestBall1.transform.position = startPoint;
+                    TestBall1.SetActive(true);
                 }
             }
 
@@ -88,15 +92,24 @@ public class DragNShoot : MonoBehaviour
             {
                 // Left Mouse Down
                 currentPoint = GetSphereHitPoint();
-                currentPoint.z = 1;
+                currentPoint.z = 0;
+
+                if (UseDebugRays)
+                {
+
+                    if (TestBall1)
+                    {
+                        TestBall1.transform.position = currentPoint;
+                    }
+                }
 
                 endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-                endPoint.z = 1;
+                endPoint.z = 0;
 
                 force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
                     Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
 
-                tl.RenderLine(currentPoint, cam.ScreenToWorldPoint(Input.mousePosition), force);
+                tl.RenderLine(currentPoint, endPoint, force);
 
                 if (CueStick)
                 {
@@ -118,6 +131,8 @@ public class DragNShoot : MonoBehaviour
                     }
 
                 }
+
+             
             }
 
 
@@ -127,9 +142,9 @@ public class DragNShoot : MonoBehaviour
 
                 // Left Mouse Down
                 endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-                endPoint.z = 1;
+                endPoint.z = 0;
 
-
+                this.rb.linearVelocity = new Vector2(0,0);
                 force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
                     Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
                 rb.AddForce(force * power, ForceMode2D.Impulse);
@@ -149,7 +164,14 @@ public class DragNShoot : MonoBehaviour
                     CueStick.transform.position = endPoint;
                 }
 
+                if (TestBall1)
+                {
+                    TestBall1.SetActive(false);
+                }
+
                 ShootEvent?.Invoke();
+
+            
             }
 
             // effect.SetVector3("ColliderPos", this.gameObject.transform.position);
@@ -179,19 +201,15 @@ public class DragNShoot : MonoBehaviour
     private Vector3 GetSphereHitPoint()
     {
         Vector3 mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 1;
+        mousePosition.z = 0;
         Vector3 centerPoint = this.transform.position;
-        centerPoint.z = 1;
+        centerPoint.z = 0;
         // Calculate the vector from the sphere's center to the mouse position
         Vector3 direction = mousePosition - centerPoint;
-        direction.z = 1;
-        // Normalize the direction to get a unit vector
-        direction.Normalize();
-
-        // Scale the unit vector by the sphere's radius
-        Vector3 closestPoint = centerPoint + direction * this.ballRadius;
-        //Debug.DrawLine(closestPoint, centerPoint, Color.red, 5f);
-        return closestPoint;
+        direction.z = 0;
+        // If the point is inside the sphere, move it to the perimeter
+        direction.Normalize(); // Normalize to get the direction
+        return centerPoint + (direction * this.ballRadius);
     }
 
     public void StartedGame()

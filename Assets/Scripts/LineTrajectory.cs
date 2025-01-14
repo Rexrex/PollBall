@@ -19,9 +19,9 @@ public class LineTrajectory : MonoBehaviour
 
         Vector3 dir = startPoint - targetPoint;
         Vector3 newPoint = startPoint + new Vector3(power.x, power.y,1) ;
-        newPoint.z = 1;
+        newPoint.z = 0;
 
-        Vector3 hitPoint;
+        /*Vector3 hitPoint;
         if (CheckIfHitBalls(startPoint, dir, power.magnitude, out hitPoint))
         {
             lineRenderer.positionCount = 3;
@@ -29,7 +29,7 @@ public class LineTrajectory : MonoBehaviour
             points[2] = hitPoint;
 
         }
-
+        */
 
         points[0] = startPoint;
         points[1] = newPoint;
