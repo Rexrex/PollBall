@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
@@ -69,6 +70,7 @@ public class GameStateManager : MonoBehaviour
             case GameState.WinMenu:
                 Time.timeScale = 0;
                 Time.fixedDeltaTime = 0;
+                WinMenu.GetComponent<TextMeshProUGUI>().text = "Score: " + GameObject.FindFirstObjectByType<ScoreManager>().CurrentStroke.ToString();
                 WinMenu.SetActive(true);
                 break;
 

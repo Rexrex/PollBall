@@ -61,7 +61,10 @@ public class GameManager : MonoBehaviour
                         NewBall.GetComponent<PoolBall>().actualBallColor = ColorLibrary[i];
                     }
 
-                    BlackBallUIInstance = GameObject.Instantiate(BlackBallUIPrefab, Vector3.zero, Quaternion.identity, BallUIDisplay.transform);
+                    if (BallUIDisplay == null)
+                    {
+                        BlackBallUIInstance = GameObject.Instantiate(BlackBallUIPrefab, Vector3.zero, Quaternion.identity, BallUIDisplay.transform);
+                    }
                 }
             }
 
@@ -93,14 +96,12 @@ public class GameManager : MonoBehaviour
             {
                 //Game Over
                 gameStateManager.GameOver();
-                Debug.Log("Game Over Man");
 
             }
             else if (PocketBallColor == Color.black && BallInPocketCount == NumberOfBalls)
             {
                 //Game Win
                 gameStateManager.GameWin();
-                Debug.Log("GG");
             }
 
             else if (PocketBallColor == Color.white)
@@ -161,6 +162,22 @@ public class GameManager : MonoBehaviour
 
     public void Reset()
     {
+
+        foreach (var g in BallUI)
+        {
+            Destroy(g.gameObject);
+        }
+
+        GameObject[] balls = GameObject.FindGameObjectsWithTag("Ball");
+        ResetPlayerBallPosition();
+
+        FindFirstObjectByType<ScoreManager>().CurrentStroke = 0;
+
+        foreach (var g in balls)
+        {
+            Destroy(g.gameObject);
+        }
+
         Start();
     }
 }
