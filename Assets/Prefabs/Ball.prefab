@@ -169,7 +169,9 @@ MonoBehaviour:
   baseColor: {r: 0, g: 0, b: 0, a: 1}
   ChangeColorOnCollision: 0
   actualBallColor: {r: 0, g: 0, b: 0, a: 0}
-  CollisioSound: {fileID: 8300000, guid: 951eca09685789949b7c2271cc1745f3, type: 3}
+  CollisionSounds:
+  - {fileID: 8300000, guid: 4ef42b8bd100c3c41bf77b7356570fd9, type: 3}
+  - {fileID: 8300000, guid: ae9283992f2f79147828588804ed5657, type: 3}
   colorChangeDuration: 0.2
 --- !u!82 &4717741537315728329
 AudioSource:

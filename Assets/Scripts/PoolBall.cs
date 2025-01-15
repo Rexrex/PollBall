@@ -11,7 +11,7 @@ public class PoolBall : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
-    public AudioClip CollisioSound;
+    public AudioClip[] CollisionSounds;
     private AudioSource audioSource;
 
     // Duration to keep the changed color
@@ -20,7 +20,7 @@ public class PoolBall : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        audioSource.clip = CollisioSound;
+        audioSource.clip = CollisionSounds[0];
 
         // Get the Renderer component and store the original color
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -47,7 +47,7 @@ public class PoolBall : MonoBehaviour
             StartCoroutine(ChangeColorTemporarily());
         }
 
-        audioSource.Play();
+        PlayRandomCollisionSound();
     }
 
     private System.Collections.IEnumerator ChangeColorTemporarily()
@@ -72,5 +72,12 @@ public class PoolBall : MonoBehaviour
     {
         // Revert to the original color
         spriteRenderer.color = baseColor;
+    }
+
+    public void PlayRandomCollisionSound()
+    {
+        int rand = Random.Range(0, CollisionSounds.Length);
+        audioSource.clip = CollisionSounds[rand];
+        audioSource.Play();
     }
 }

@@ -19,6 +19,8 @@ public class PocketScript : MonoBehaviour
 
             gameManager.ScoredBall(collision.gameObject);
 
+            GetComponent<AudioSource>().Play();
+
             if(tag != "Player")
                 Destroy(collision.gameObject);
         }

@@ -37,7 +37,7 @@ public class DragNShoot : MonoBehaviour
     [Header("Audio")]
     private AudioSource AudioSource;
     public AudioClip BreakClip;
-    public AudioClip ShootClipt;
+    public AudioClip ShootClip;
 
 
     private Rigidbody2D rb;
@@ -59,7 +59,7 @@ public class DragNShoot : MonoBehaviour
         cam = Camera.main;
         tl = GetComponent<LineTrajectory>();
         AudioSource = GetComponent<AudioSource>();
-        AudioSource.clip = BreakClip;
+        AudioSource.clip = ShootClip;
 
         startTimeScale = Time.timeScale;
         startFixedDeltaTime = Time.fixedDeltaTime;
@@ -191,7 +191,8 @@ public class DragNShoot : MonoBehaviour
                 }
 
                 ShootEvent?.Invoke();
-                //AudioSource.Play();
+                AudioSource.volume = force.magnitude * 0.25f;
+                AudioSource.Play();
             
             }
 
