@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.VFX;
@@ -34,6 +35,12 @@ public class DragNShoot : MonoBehaviour
     public GameObject TestBall1;
     public bool UseDebugRays;
 
+    [Header("Audio")]
+    private AudioSource AudioSource;
+    public AudioClip BreakClip;
+    public AudioClip ShootClip;
+
+
     private Rigidbody2D rb;
     LineTrajectory tl;
 
@@ -52,6 +59,8 @@ public class DragNShoot : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
         tl = GetComponent<LineTrajectory>();
+        AudioSource = GetComponent<AudioSource>();
+        AudioSource.clip = ShootClip;
 
         startTimeScale = Time.timeScale;
         startFixedDeltaTime = Time.fixedDeltaTime;
@@ -59,7 +68,9 @@ public class DragNShoot : MonoBehaviour
 
     void Update()
     {
-        if (GameStateManager.currentState == GameStateManager.GameState.Play && gameStarted)
+        bool pointerOverUI = EventSystem.current.IsPointerOverGameObject();
+
+        if (GameStateManager.currentState == GameStateManager.GameState.Play && gameStarted && !pointerOverUI)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -111,7 +122,7 @@ public class DragNShoot : MonoBehaviour
                 Vector3 direction = endPoint - currentPoint;
                 direction.z = 0;
 
-                if(direction.magnitude >= ShootMaxDistance)
+                if (direction.magnitude >= ShootMaxDistance)
                 {
                     direction.Normalize();
                     endPoint = currentPoint + direction * ShootMaxDistance;
@@ -145,7 +156,7 @@ public class DragNShoot : MonoBehaviour
 
                 }
 
-             
+
             }
 
 
@@ -157,7 +168,7 @@ public class DragNShoot : MonoBehaviour
                 endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
                 endPoint.z = 0;
 
-                this.rb.linearVelocity = new Vector2(0,0);
+                this.rb.linearVelocity = new Vector2(0, 0);
                 force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
                     Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
                 rb.AddForce(force * power, ForceMode2D.Impulse);
@@ -183,12 +194,13 @@ public class DragNShoot : MonoBehaviour
                 }
 
                 ShootEvent?.Invoke();
+                AudioSource.volume = force.magnitude * 0.25f;
+                AudioSource.Play();
 
-            
             }
 
-            // effect.SetVector3("ColliderPos", this.gameObject.transform.position);
         }
+        else Time.timeScale = 1;
 
     }
 
@@ -228,5 +240,11 @@ public class DragNShoot : MonoBehaviour
     public void StartedGame()
     {
         gameStarted = true;
+    }
+
+    public void PausedGame()
+    {
+        gameStarted = false;
+
     }
 }
