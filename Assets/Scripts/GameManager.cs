@@ -15,9 +15,10 @@ public class GameManager : MonoBehaviour
     public Vector3[] BallStartingPositions;
     public Color[] ForbiddenBalls;
 
-    [Header("GUI")]
+    [Header("Prefabs")]
     public GameObject BallPrefab;
     public GameObject BallParent;
+    public GameObject BlackBallPrefab;
 
     [Header("GUI")]
     public GameObject BallUIDisplay;
@@ -61,7 +62,10 @@ public class GameManager : MonoBehaviour
                         NewBall.GetComponent<PoolBall>().actualBallColor = ColorLibrary[i];
                     }
 
-                    if (BallUIDisplay == null)
+                    GameObject BlackBall = GameObject.Instantiate(BlackBallPrefab, BallStartingPositions[0], Quaternion.identity, BallParent.transform);
+                    BlackBall.transform.localPosition = Vector3.zero;
+
+                    if (BlackBallUIInstance == null)
                     {
                         BlackBallUIInstance = GameObject.Instantiate(BlackBallUIPrefab, Vector3.zero, Quaternion.identity, BallUIDisplay.transform);
                     }
@@ -104,30 +108,6 @@ public class GameManager : MonoBehaviour
                 gameStateManager.GameWin();
             }
 
-            else if (PocketBallColor == Color.white)
-            {
-                // Reset
-                ResetPlayerBallPosition();
-
-                if (BallInPocketCount > 0)
-                {
-                    //Instantiate a Ball
-
-                    foreach (var g in BallUI)
-                    {
-                        
-                        if (CompareRGBs(g.GetComponent<UnityEngine.UI.Image>().color , PocketBallColor))
-                        {
-                            g.GetComponent<UnityEngine.UI.Image>().color = new Color(PocketBallColor.r, PocketBallColor.g, PocketBallColor.b, StartingAlpha);
-                            GameObject NewBall = GameObject.Instantiate(BallPrefab, BallStartingPositions[0], Quaternion.identity, BallParent.transform);
-                            NewBall.transform.localPosition = BallStartingPositions[0];
-                            NewBall.GetComponent<SpriteRenderer>().color = PocketBallColor;
-                            NewBall.GetComponent<PoolBall>().actualBallColor = PocketBallColor;
-                            break;
-                        }
-                    }
-                }
-            }
             else
             {
                 BallInPocketCount += 1;
@@ -146,8 +126,33 @@ public class GameManager : MonoBehaviour
                     BlackBallUIInstance.transform.GetChild(0).gameObject.SetActive(false);
                 }
             }
-        }   
-        
+        }
+        else if(Ball.GetComponent<DragNShoot>())
+        {
+            // Reset
+            ResetPlayerBallPosition();
+
+            if (BallInPocketCount > 0)
+            {
+                //Instantiate a Ball
+
+                foreach (var g in BallUI)
+                {
+                    Color PocketBallColor = g.GetComponent<UnityEngine.UI.Image>().color;
+
+                    if (PocketBallColor.a == 1.0f)
+                    {
+
+                        PocketBallColor = new Color(PocketBallColor.r, PocketBallColor.g, PocketBallColor.b, StartingAlpha);
+                        GameObject NewBall = GameObject.Instantiate(BallPrefab, BallStartingPositions[0], Quaternion.identity, BallParent.transform);
+                        NewBall.transform.localPosition = BallStartingPositions[0];
+                        NewBall.GetComponent<SpriteRenderer>().color = PocketBallColor;
+                        NewBall.GetComponent<PoolBall>().actualBallColor = PocketBallColor;
+                        break;
+                    }
+                }
+            }
+        }
 
     }
 
@@ -172,12 +177,13 @@ public class GameManager : MonoBehaviour
         ResetPlayerBallPosition();
 
         FindFirstObjectByType<ScoreManager>().CurrentStroke = 0;
-
+        Destroy(BlackBallUIInstance);
         foreach (var g in balls)
         {
             Destroy(g.gameObject);
         }
-
+        GameObject.FindGameObjectWithTag("Player").GetComponent<DragNShoot>().PausedGame();
         Start();
+        GameObject.FindGameObjectWithTag("Player").GetComponent<DragNShoot>().StartedGame();
     }
 }

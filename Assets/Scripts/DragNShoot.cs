@@ -238,4 +238,10 @@ public class DragNShoot : MonoBehaviour
     {
         gameStarted = true;
     }
+
+    public void PausedGame()
+    {
+        gameStarted = false;
+
+    }
 }
