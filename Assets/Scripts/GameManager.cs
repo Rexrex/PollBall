@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     public GameObject BlackBallUIPrefab;
     public float StartingAlpha;
 
+    private GameObject PlayerBall;
     public Vector3 InitialPlayerPos { get; private set; }
 
     private List<GameObject> BallUI;
@@ -35,8 +36,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-
-        InitialPlayerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+        PlayerBall = GameObject.FindGameObjectWithTag("Player");
+        InitialPlayerPos = PlayerBall.transform.position;
         gameStateManager = this.GetComponent<GameStateManager>();
         BallUI = new List<GameObject>();
 
@@ -86,7 +87,12 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Resetting Player");
 
-        GameObject.FindGameObjectWithTag("Player").transform.position = InitialPlayerPos;
+        PlayerBall.transform.position = InitialPlayerPos;
+
+        Rigidbody2D playerBody = PlayerBall.GetComponent<Rigidbody2D>();
+        playerBody.angularVelocity = 0;
+        playerBody.linearVelocity = Vector2.zero;
+
     }
 
     public void ScoredBall(GameObject Ball)

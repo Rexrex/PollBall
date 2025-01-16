@@ -53,7 +53,7 @@ public class GameStateManager : MonoBehaviour
 
             case GameState.Play:
                 Time.timeScale = 1;
-                Time.fixedDeltaTime = 1;
+                Time.fixedDeltaTime = 0;
                 StartMenu.SetActive(false);
                 PauseMenu.SetActive(false);
                 GameOverMenu.SetActive(false);
@@ -86,7 +86,7 @@ public class GameStateManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void StartGame()
@@ -110,6 +110,7 @@ public class GameStateManager : MonoBehaviour
     public void UnPauseGame()
     {
         UpdateState(GameState.Play);
+        Invoke(nameof(ActuallyStartTheGame), 0.1f);
     }
 
 
