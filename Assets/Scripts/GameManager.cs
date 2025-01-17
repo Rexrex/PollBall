@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using System.Linq; // For Linq methods
 
 public class GameManager : MonoBehaviour
 {
@@ -49,6 +50,8 @@ public class GameManager : MonoBehaviour
 
                 if (BallUIDisplay != null)
                 {
+                    // Shuffle the ColorLibrary array
+                    ColorLibrary = ColorLibrary.OrderBy(x => Random.value).ToArray();
 
                     for (int i = 0; i < NumberOfBalls; i++)
                     {
@@ -154,6 +157,9 @@ public class GameManager : MonoBehaviour
                         NewBall.transform.localPosition = BallStartingPositions[0];
                         NewBall.GetComponent<SpriteRenderer>().color = PocketBallColor;
                         NewBall.GetComponent<PoolBall>().actualBallColor = PocketBallColor;
+                        g.GetComponent<UnityEngine.UI.Image>().color = PocketBallColor;
+
+                        BallInPocketCount -= 1;
                         break;
                     }
                 }

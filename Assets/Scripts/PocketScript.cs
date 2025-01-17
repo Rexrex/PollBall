@@ -29,6 +29,8 @@ public class PocketScript : MonoBehaviour
             {
                 gBallToKill = collision.gameObject;
                 BallToKill = true;
+                gBallToKill.GetComponent<Rigidbody2D>().angularVelocity = 0;
+                gBallToKill.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
                 AuxTimer = KillTimer;
             }
               
