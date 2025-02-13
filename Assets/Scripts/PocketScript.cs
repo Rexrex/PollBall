@@ -4,57 +4,40 @@ public class PocketScript : MonoBehaviour
 {
 
     public int pointsPerBall = 10;
-    private GameManager gameManager;
-    private bool BallToKill = false;
-    private GameObject gBallToKill;
-    private float KillTimer = 2.0f;
-    private float AuxTimer = 0;
+    private GameManager _gameManager;
+    private AudioSource _pocketAudio;
 
     void Start()
     {
-        gameManager = FindFirstObjectByType<GameManager>();
+        _gameManager = FindFirstObjectByType<GameManager>();
+        _pocketAudio = GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag != null)
+        if (collision.gameObject.CompareTag("Ball"))
         {
-            string tag = collision.gameObject.name.ToString();
+            //Informing the manager
+            _gameManager.ScoredBall(collision.gameObject);
 
-            gameManager.ScoredBall(collision.gameObject);
+            // Playing sound
+            _pocketAudio.Play();
 
-            GetComponent<AudioSource>().Play();
+            Rigidbody2D ballRigidbody2D = collision.gameObject.GetComponent<Rigidbody2D>();
 
-            if(tag != "Player" && !BallToKill)
+            if (ballRigidbody2D != null)
             {
-                gBallToKill = collision.gameObject;
-                BallToKill = true;
-                gBallToKill.GetComponent<Rigidbody2D>().angularVelocity = 0;
-                gBallToKill.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-                AuxTimer = KillTimer;
+                ballRigidbody2D.angularVelocity = 0;
+                ballRigidbody2D.linearVelocity = Vector2.zero;
             }
-              
+
+            collision.gameObject.GetComponent<PoolBall>()?.Dissolve();
+
         }
-        
-    }
-
-    private void FixedUpdate()
-    {
-
-        if(AuxTimer < 0.0f && BallToKill)
+        else if (collision.gameObject.CompareTag("Player"))
         {
-            Destroy(gBallToKill);
-            BallToKill = false;
+            _gameManager.HandleCueBallIn();
         }
-
-        else if( BallToKill) {
-            AuxTimer -= Time.deltaTime;
-
-            if(gBallToKill != null)
-                gBallToKill.transform.localScale *= 0.99f;
-        }
-       
     }
-
 
 }

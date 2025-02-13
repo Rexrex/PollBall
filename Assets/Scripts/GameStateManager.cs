@@ -13,14 +13,15 @@ public class GameStateManager : MonoBehaviour
         End
     }
 
-
+    /*
+     Defines the Menu Widgets
+    */
 
     [Header("Menus")]
     public GameObject StartMenu;
     public GameObject PauseMenu;
     public GameObject GameOverMenu;
     public GameObject WinMenu;
-
     public GameObject GameUI;
 
     public static GameState currentState;

@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
     public void ScoredBall(GameObject Ball)
     {
 
-        if(Ball.GetComponent<PoolBall>() != null)
+        if (Ball.GetComponent<PoolBall>() != null)
         {
             Color PocketBallColor = Ball.GetComponent<PoolBall>().actualBallColor;
 
@@ -130,15 +130,17 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
-                if(BallInPocketCount == NumberOfBalls)
+                if (BallInPocketCount == NumberOfBalls)
                 {
                     BlackBallUIInstance.transform.GetChild(0).gameObject.SetActive(false);
                 }
             }
         }
-        else if(Ball.GetComponent<DragNShoot>())
-        {
-            // Reset
+    }
+
+    // White Ball Ended in a Pocket
+    public void HandleCueBallIn() { 
+
             ResetPlayerBallPosition();
 
             if (BallInPocketCount > 0)
@@ -165,9 +167,6 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-
-    }
-
 
     public bool CompareRGBs(Color a, Color b)
     {

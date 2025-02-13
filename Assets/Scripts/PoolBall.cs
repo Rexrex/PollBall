@@ -11,11 +11,16 @@ public class PoolBall : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
+    //Audio
     public AudioClip[] CollisionSounds;
     private AudioSource audioSource;
 
     // Duration to keep the changed color
     public float colorChangeDuration = 0.3f;
+
+    // What happens when a ball goes into a pocket
+    bool MarkedToDie = false;
+    public float KillTimer = 2.0f;
 
     private void Start()
     {
@@ -79,5 +84,27 @@ public class PoolBall : MonoBehaviour
         int rand = Random.Range(0, CollisionSounds.Length);
         audioSource.clip = CollisionSounds[rand];
         audioSource.Play();
+    }
+
+
+    public void Dissolve()
+    {
+        MarkedToDie = true;
+    }
+
+    private void FixedUpdate()
+    {
+        
+        if (KillTimer < 0.0f)
+        {
+            Destroy(this);
+        }
+       
+        else if (MarkedToDie)
+        {
+            KillTimer -= Time.deltaTime;
+            //  A simple animation for when the ball goes into a pocket
+            this.transform.localScale *= 0.99f;
+        }
     }
 }
