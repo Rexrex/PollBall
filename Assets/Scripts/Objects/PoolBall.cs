@@ -8,7 +8,7 @@ public class PoolBall : MonoBehaviour
     [Header("Ball Appearance")]
     public Color baseColor;
     public bool ChangeColorOnCollision;
-    public Color actualBallColor = Color.white;
+    public Color actualBallColor;
 
     [Header("Rendering")]
     private SpriteRenderer _spriteRenderer;
@@ -71,13 +71,15 @@ public class PoolBall : MonoBehaviour
     public void ChangeColor()
     {
         // Change to the hit color
-        _spriteRenderer.color = actualBallColor;
+        if(_spriteRenderer != null)
+            _spriteRenderer.color = actualBallColor;
     }
 
     public void ResetColor()
     {
         // Revert to the original color
-        _spriteRenderer.color = baseColor;
+        if (_spriteRenderer != null)
+            _spriteRenderer.color = baseColor;
     }
 
     public void PlayRandomCollisionSound()
@@ -102,7 +104,7 @@ public class PoolBall : MonoBehaviour
     {
 
         float timer = 0f;
-        Color startColor = _spriteRenderer.color;
+        Color startColor = actualBallColor;
         Vector3 startScale = transform.localScale;
 
         while (timer < fadeOutDuration)

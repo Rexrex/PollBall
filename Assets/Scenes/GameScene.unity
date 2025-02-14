@@ -2294,7 +2294,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f213a13dfee7d1349915dbf86fdcdc4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RatioIntensity: 3.2
+  RatioIntensity: 3.4
   BackgroundToScale: {fileID: 1458096394}
   mainCam: {fileID: 519420031}
 --- !u!114 &647704456
@@ -2348,7 +2348,6 @@ MonoBehaviour:
   - {x: 0.9, y: -0.2, z: 0}
   - {x: 0.9, y: 0.6, z: 0}
   - {x: 0.9, y: -0.6, z: 0}
-  ForbiddenBalls: []
   BallPrefab: {fileID: 3942160637953405108, guid: 7ed9c00025ab34d4283654c283a2af4c, type: 3}
   BallParent: {fileID: 140685327}
   BlackBallPrefab: {fileID: 8564602521963746273, guid: 4d6fcead73f602d4a9f1b9aaceff034f, type: 3}
