@@ -15,6 +15,7 @@ public class PocketScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // A better way of comparing tags
         if (collision.gameObject.CompareTag("Ball"))
         {
             //Informing the manager
@@ -28,7 +29,9 @@ public class PocketScript : MonoBehaviour
             if (ballRigidbody2D != null)
             {
                 ballRigidbody2D.angularVelocity = 0;
-                ballRigidbody2D.linearVelocity = Vector2.zero;
+
+                // I don't want to kill all of the ball's momentum
+                ballRigidbody2D.linearVelocity *= 0.1f;
             }
 
             collision.gameObject.GetComponent<PoolBall>()?.Dissolve();

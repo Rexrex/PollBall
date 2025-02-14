@@ -33,13 +33,13 @@ public class GameManager : MonoBehaviour
     private List<GameObject> BallUI;
     private GameObject BlackBallUIInstance;
     private int BallInPocketCount = 0;
-    private GameStateManager gameStateManager;
+    private StateManager gameStateManager;
 
     void Start()
     {
         PlayerBall = GameObject.FindGameObjectWithTag("Player");
         InitialPlayerPos = PlayerBall.transform.position;
-        gameStateManager = this.GetComponent<GameStateManager>();
+        gameStateManager = this.GetComponent<StateManager>();
         BallUI = new List<GameObject>();
 
         // Setting up colors

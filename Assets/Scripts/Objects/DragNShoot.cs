@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.VFX;
-using static GameStateManager;
+using static StateManager;
 
 public class DragNShoot : MonoBehaviour
 {
@@ -70,7 +70,7 @@ public class DragNShoot : MonoBehaviour
     {
         bool pointerOverUI = EventSystem.current.IsPointerOverGameObject();
 
-        if (GameStateManager.currentState == GameStateManager.GameState.Play && gameStarted && !pointerOverUI)
+        if (StateManager.currentState == StateManager.GameState.Play && gameStarted && !pointerOverUI)
         {
             if (Input.GetMouseButtonDown(0))
             {

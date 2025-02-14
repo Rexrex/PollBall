@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class GameStateManager : MonoBehaviour
+public class StateManager : MonoBehaviour
 {
     public enum GameState
     {
