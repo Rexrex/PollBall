@@ -17,8 +17,8 @@ public class DragNShoot : MonoBehaviour
     public float slowMotionTimeScale;
     public float incrementalSlowMod = 0.001f;
 
-    private float startTimeScale;
-    private float startFixedDeltaTime;
+    private float _startTimeScale;
+    private float _startFixedDeltaTime;
 
     [Header("Shoot Variables")]
     public float power = 10f;
@@ -36,19 +36,17 @@ public class DragNShoot : MonoBehaviour
     public bool UseDebugRays;
 
     [Header("Audio")]
-    private AudioSource AudioSource;
+    private AudioSource _audioSource;
     public AudioClip BreakClip;
     public AudioClip ShootClip;
 
 
-    private Rigidbody2D rb;
-    LineTrajectory tl;
+    private Rigidbody2D _rigidbody2d;
+    LineTrajectory _lineTrajectory;
 
-    Camera cam;
-    Vector2 force;
-    Vector3 startPoint;
-    Vector3 currentPoint;
-    Vector3 endPoint;
+    Camera _camera;
+    Vector2 _force;
+    Vector3 _startPoint, _currentPoint, _endPoint;
     bool gameStarted = false;
 
     public static event Action ShootEvent;
@@ -56,14 +54,14 @@ public class DragNShoot : MonoBehaviour
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        cam = Camera.main;
-        tl = GetComponent<LineTrajectory>();
-        AudioSource = GetComponent<AudioSource>();
-        AudioSource.clip = ShootClip;
+        _rigidbody2d = GetComponent<Rigidbody2D>();
+        _camera = Camera.main;
+        _lineTrajectory = GetComponent<LineTrajectory>();
+        _audioSource = GetComponent<AudioSource>();
+        _audioSource.clip = ShootClip;
 
-        startTimeScale = Time.timeScale;
-        startFixedDeltaTime = Time.fixedDeltaTime;
+        _startTimeScale = Time.timeScale;
+        _startFixedDeltaTime = Time.fixedDeltaTime;
     }
 
     void Update()
@@ -74,134 +72,149 @@ public class DragNShoot : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                // Left Mouse Down
-                startPoint = GetSphereHitPoint();
-                startPoint.z = 0;
-
-                if (useSlowMotion)
-                {
-                    StartSlowMotion();
-                }
-
-                if (CueStick)
-                {
-                    CueStick.SetActive(true);
-                    this.rb.angularVelocity = 0;
-                    CueStick.transform.position = startPoint;
-
-                    Vector3 vectorToTarget = CueStick.transform.position - transform.position;
-
-                    CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
-                }
-
-                if (TestBall1)
-                {
-                    TestBall1.transform.position = startPoint;
-                    TestBall1.SetActive(true);
-                }
+                HandleFirstInput();
             }
 
             if (Input.GetMouseButton(0))
             {
-                // Left Mouse Down
-                currentPoint = GetSphereHitPoint();
-                currentPoint.z = 0;
-
-                if (UseDebugRays)
-                {
-
-                    if (TestBall1)
-                    {
-                        TestBall1.transform.position = currentPoint;
-                    }
-                }
-
-                endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-                endPoint.z = 0;
-
-                Vector3 direction = endPoint - currentPoint;
-                direction.z = 0;
-
-                if (direction.magnitude >= ShootMaxDistance)
-                {
-                    direction.Normalize();
-                    endPoint = currentPoint + direction * ShootMaxDistance;
-                }
-
-                force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
-                    Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
-
-                tl.RenderLine(currentPoint, endPoint, force, ballRadius);
-
-                if (CueStick)
-                {
-                    CueStick.transform.position = endPoint;
-
-                    float targetPosX = currentPoint.x - this.transform.position.x;
-                    float targetPosY = this.transform.position.y - currentPoint.y;
-
-                    float angle = Mathf.Atan2(targetPosX, targetPosY) * Mathf.Rad2Deg;
-                    CueStick.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
-
-
-                }
-
-                if (useSlowMotion)
-                {
-                    if (Time.timeScale < 1.0f)
-                    {
-                        Time.timeScale += incrementalSlowMod;
-                        Time.fixedDeltaTime = startFixedDeltaTime * Time.timeScale;
-                    }
-
-                }
-
-
+                HandleInputDown();
             }
 
 
             if (Input.GetMouseButtonUp(0))
             {
 
-
-                // Left Mouse Down
-                endPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-                endPoint.z = 0;
-
-                this.rb.linearVelocity = new Vector2(0, 0);
-                force = new Vector2(Mathf.Clamp(currentPoint.x - endPoint.x, minPower.x, maxPower.x),
-                    Mathf.Clamp(currentPoint.y - endPoint.y, minPower.y, maxPower.y));
-                rb.AddForce(force * power, ForceMode2D.Impulse);
-
-
-                tl.EndLine();
-
-
-                if (useSlowMotion)
-                {
-                    StopSlowMotion();
-                }
-
-                if (CueStick)
-                {
-                    CueStick.SetActive(false);
-                    CueStick.transform.position = endPoint;
-                }
-
-                if (TestBall1)
-                {
-                    TestBall1.SetActive(false);
-                }
-
-                ShootEvent?.Invoke();
-                AudioSource.volume = force.magnitude * 0.25f;
-                AudioSource.Play();
-
+                HandleReleasedInput();
             }
 
         }
         else Time.timeScale = 1;
 
+    }
+
+    void HandleReleasedInput()
+    {
+
+        // Left Mouse Released
+        _endPoint = _camera.ScreenToWorldPoint(Input.mousePosition);
+        _endPoint.z = 0;
+
+        this._rigidbody2d.linearVelocity = new Vector2(0, 0);
+        _force = new Vector2(Mathf.Clamp(_currentPoint.x - _endPoint.x, minPower.x, maxPower.x),
+            Mathf.Clamp(_currentPoint.y - _endPoint.y, minPower.y, maxPower.y));
+        _rigidbody2d.AddForce(_force * power, ForceMode2D.Impulse);
+
+
+        _lineTrajectory.EndLine();
+
+
+        if (useSlowMotion)
+        {
+            StopSlowMotion();
+        }
+
+        if (CueStick)
+        {
+            CueStick.SetActive(false);
+            CueStick.transform.position = _endPoint;
+        }
+
+        // Debugging
+        if (TestBall1)
+        {
+            TestBall1.SetActive(false);
+        }
+
+        ShootEvent?.Invoke();
+        _audioSource.volume = _force.magnitude * 0.25f;
+        _audioSource.Play();
+
+    }
+
+    void HandleInputDown()
+    {
+        // Left Mouse Down
+        _currentPoint = GetSphereHitPoint();
+        _currentPoint.z = 0;
+
+        if (UseDebugRays)
+        {
+
+            if (TestBall1)
+            {
+                TestBall1.transform.position = _currentPoint;
+            }
+        }
+
+        _endPoint = _camera.ScreenToWorldPoint(Input.mousePosition);
+        _endPoint.z = 0;
+
+        Vector3 direction = _endPoint - _currentPoint;
+        direction.z = 0;
+
+        if (direction.magnitude >= ShootMaxDistance)
+        {
+            direction.Normalize();
+            _endPoint = _currentPoint + direction * ShootMaxDistance;
+        }
+
+        _force = new Vector2(Mathf.Clamp(_currentPoint.x - _endPoint.x, minPower.x, maxPower.x),
+            Mathf.Clamp(_currentPoint.y - _endPoint.y, minPower.y, maxPower.y));
+
+        _lineTrajectory.RenderLine(_currentPoint, _endPoint, _force, ballRadius);
+
+        if (CueStick)
+        {
+            CueStick.transform.position = _endPoint;
+
+            float targetPosX = _currentPoint.x - this.transform.position.x;
+            float targetPosY = this.transform.position.y - _currentPoint.y;
+
+            float angle = Mathf.Atan2(targetPosX, targetPosY) * Mathf.Rad2Deg;
+            CueStick.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+
+
+        }
+
+        if (useSlowMotion)
+        {
+            if (Time.timeScale < 1.0f)
+            {
+                Time.timeScale += incrementalSlowMod;
+                Time.fixedDeltaTime = _startFixedDeltaTime * Time.timeScale;
+            }
+
+        }
+    }
+
+    void HandleFirstInput()
+    {
+
+        // Left Mouse Down
+        _startPoint = GetSphereHitPoint();
+        _startPoint.z = 0;
+
+        if (useSlowMotion)
+        {
+            StartSlowMotion();
+        }
+
+        if (CueStick)
+        {
+            CueStick.SetActive(true);
+            this._rigidbody2d.angularVelocity = 0;
+            CueStick.transform.position = _startPoint;
+
+            Vector3 vectorToTarget = CueStick.transform.position - transform.position;
+
+            CueStick.transform.rotation = Quaternion.LookRotation(vectorToTarget, Vector3.forward);
+        }
+
+        if (TestBall1)
+        {
+            TestBall1.transform.position = _startPoint;
+            TestBall1.SetActive(true);
+        }
     }
 
     /*
@@ -210,7 +223,7 @@ public class DragNShoot : MonoBehaviour
     public void StartSlowMotion()
     {
         Time.timeScale = slowMotionTimeScale;
-        Time.fixedDeltaTime = startFixedDeltaTime * slowMotionTimeScale;
+        Time.fixedDeltaTime = _startFixedDeltaTime * slowMotionTimeScale;
     }
 
     /*
@@ -219,13 +232,13 @@ public class DragNShoot : MonoBehaviour
     public void StopSlowMotion() 
     {
 
-        Time.timeScale = startTimeScale;
-        Time.fixedDeltaTime = startFixedDeltaTime;
+        Time.timeScale = _startTimeScale;
+        Time.fixedDeltaTime = _startFixedDeltaTime;
     }
 
     private Vector3 GetSphereHitPoint()
     {
-        Vector3 mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 mousePosition = _camera.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0;
         Vector3 centerPoint = this.transform.position;
         centerPoint.z = 0;
