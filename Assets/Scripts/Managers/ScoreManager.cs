@@ -4,10 +4,11 @@ using UnityEngine;
 public class ScoreManager : MonoBehaviour
 {
 
-    int CurrentStroke = 0;
+    public int CurrentStroke = 0;
     Vector3 InitialPlayerPos;
 
     public TextMeshProUGUI textMeshProUGUI;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

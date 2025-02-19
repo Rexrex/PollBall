@@ -1,27 +1,33 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum SceneName
+{
+    MainMenu,
+    GameScene,
+    OptionsScene
+}
+
 public class MainMenu : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    
-    public void Quit()
-    {
-        Application.Quit();
-    }
 
     public void StartGame()
     {
-       SceneManager.LoadScene(1);
+        LoadScene(SceneName.GameScene);
     }
 
     public void Options()
     {
-        SceneManager.LoadScene(1);
+        LoadScene(SceneName.OptionsScene);
+    }
+
+    private void LoadScene(SceneName scene)
+    {
+        SceneManager.LoadScene(scene.ToString());  // Convert enum to string
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
     }
 }
